@@ -1,0 +1,36 @@
+{
+  "name": "example-nodejs-client",
+  "version": "0.1.0",
+  "description": "",
+  "main": "node src/connection.ts",
+  "type": "commonjs",
+  "scripts": {
+    "mint": "ts-node src/simple-airdrop/mint.ts",
+    "airdrop:simple": "ts-node src/simple-airdrop/mint.ts",
+    "decompress": "ts-node src/simple-airdrop/decompress.ts",
+    "airdrop:large": "ts-node src/optimized-airdrop/mint.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lightprotocol/example-nodejs-client.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lightprotocol/example-nodejs-client/issues"
+  },
+  "homepage": "https://github.com/Lightprotocol/example-nodejs-client#readme",
+  "dependencies": {
+    "@lightprotocol/compressed-token": "file:../light-protocol/js/compressed-token",
+    "@lightprotocol/stateless.js": "file:../light-protocol/js/stateless.js",
+    "@solana/spl-token": "0.3.9",
+    "@solana/spl-token-metadata": "^0.1.6",
+    "@solana/web3.js": "^1.98.0",
+    "@types/node": "^20.12.7",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
