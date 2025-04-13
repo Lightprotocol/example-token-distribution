@@ -1,6 +1,6 @@
-# example-nodejs-client
+# example-token-distribution
 
-Commonjs script that executes basic compression/decompression/transfer instructions.
+Reference implementations for common token distribution flows with ZK Compression (airdrops, payments, rewards)
 
 ### Requirements
 
@@ -13,26 +13,6 @@ Commonjs script that executes basic compression/decompression/transfer instructi
 light test-validator
 ```
 
-### Running the Token Example
+### Quickstart
 
-To run the `token.ts` example:
-
-1. By default, it interacts with Solana Devnet.
-2. Create a `.env` file in the root directory using `.env.example` as a template.
-3. Set your `RPC_ENDPOINT`, `PAYER_KEYPAIR`, `MINT_ADDRESS` in the `.env` file.
-
-### Running the full example
-
-```bash
-npm install
-```
-
-```bash
-# npm run connection
-# npm run token
-# npm run lamports
-# npm run extended
-# npm run lookup-table
-npm run example
-npm run debug-ix-too-large
-```
+wip.
