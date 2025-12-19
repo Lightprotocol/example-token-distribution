@@ -5,6 +5,7 @@ import {
 } from '@solana/web3.js';
 import {
     CompressedTokenProgram,
+    createTokenPool,
     getTokenPoolInfos,
     selectTokenPoolInfo,
 } from '@lightprotocol/compressed-token';
@@ -18,12 +19,11 @@ import {
     selectStateTreeInfo,
     sendAndConfirmTx,
 } from '@lightprotocol/stateless.js';
-import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
-import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
+import { PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
 
 (async () => {
     const connection: Rpc = createRpc(RPC_ENDPOINT);
-    const mintAddress = MINT_ADDRESS;
     const payer = PAYER_KEYPAIR;
     const owner = payer;
     const recipients = [
@@ -31,22 +31,32 @@ import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
         // ...
     ];
 
-    // 1. Select a state tree
-    const treeInfos = await connection.getCachedActiveStateTreeInfos();
-    const treeInfo = selectStateTreeInfo(treeInfos);
+    // Setup: Create mint + token pool + mint SPL tokens
+    const mint = await createMint(connection, payer, payer.publicKey, null, 9);
+    console.log(`Mint: ${mint.toBase58()}`);
 
-    // 2. Select a token pool
-    const tokenPoolInfos = await getTokenPoolInfos(connection, mintAddress);
-    const tokenPoolInfo = selectTokenPoolInfo(tokenPoolInfos);
+    await createTokenPool(connection, payer, mint);
+    console.log('Token pool created');
 
-    // Create an SPL token account for the sender.
-    // The sender will send tokens from this account to the recipients as compressed tokens.
+    // Create an SPL token account for the sender
     const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
         connection,
         payer,
-        mintAddress,
+        mint,
         payer.publicKey,
     );
+
+    // Mint SPL tokens to ATA
+    await mintTo(connection, payer, mint, sourceTokenAccount.address, payer.publicKey, 100_000_000_000);
+    console.log('Minted 100 SPL tokens to ATA');
+
+    // 1. Select a state tree
+    const treeInfos = await connection.getStateTreeInfos();
+    const treeInfo = selectStateTreeInfo(treeInfos);
+
+    // 2. Select a token pool
+    const tokenPoolInfos = await getTokenPoolInfos(connection, mint);
+    const tokenPoolInfo = selectTokenPoolInfo(tokenPoolInfos);
 
     // 1 recipient = 120_000 CU
     // 5 recipients = 170_000 CU
@@ -69,7 +79,7 @@ import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
         source: sourceTokenAccount.address,
         toAddress: recipients,
         amount: recipients.map(() => amount),
-        mint: mintAddress,
+        mint,
         outputStateTreeInfo: treeInfo,
         tokenPoolInfo,
     });
@@ -77,8 +87,8 @@ import { MINT_ADDRESS, PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
 
     // https://www.zkcompression.com/developers/protocol-addresses-and-urls#lookup-tables
     const lookupTableAddress = new PublicKey(
-        '9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ', // mainnet
-        // "qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V" // devnet
+        'qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V', // devnet
+        // "9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ" // mainnet
     );
 
     // Get the lookup table account state

@@ -34,7 +34,8 @@ export async function* signAndSendAirdropBatches(
   // Use zk-compression LUT for your network
   // https://www.zkcompression.com/developers/protocol-addresses-and-urls#lookup-tables
   const lookupTableAddress = new PublicKey(
-    "9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ"
+    "qAJZMgnQJ8G6vA3WRcjD9Jan1wtKkaCFWLWskxJrR5V" // devnet
+    // "9NYFyEqPkyXUhkerbGHXUXkvb4qpzeEdHuGpgbgpH1NJ" // mainnet
   );
 
   // Get the lookup table account

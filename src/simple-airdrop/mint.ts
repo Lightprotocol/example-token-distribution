@@ -7,7 +7,7 @@ import {
 import { PAYER_KEYPAIR, RPC_ENDPOINT } from '../constants';
 
 const payer = PAYER_KEYPAIR;
-const connection: Rpc = createRpc(RPC_ENDPOINT, RPC_ENDPOINT);
+const connection: Rpc = createRpc(RPC_ENDPOINT);
 const decimals = 9;
 const mintAmount = 100;
 

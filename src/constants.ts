@@ -1,12 +1,14 @@
-import { Keypair, PublicKey } from '@solana/web3.js';
-import bs58 from 'bs58';
+import { Keypair } from '@solana/web3.js';
+import * as fs from 'fs';
+import * as os from 'os';
 import dotenv from 'dotenv';
 dotenv.config();
 
 export const RPC_ENDPOINT = process.env.RPC_ENDPOINT;
-export const PAYER_KEYPAIR = Keypair.fromSecretKey(
-    bs58.decode(process.env.PAYER_KEYPAIR!),
-);
-export const MINT_ADDRESS = new PublicKey(process.env.MINT_ADDRESS!);
+
+// Load wallet from Solana CLI default location
+const walletPath = `${os.homedir()}/.config/solana/id.json`;
+const secretKey = JSON.parse(fs.readFileSync(walletPath, 'utf8'));
+export const PAYER_KEYPAIR = Keypair.fromSecretKey(Buffer.from(secretKey));
 
 if (!RPC_ENDPOINT) throw new Error('Please set RPC_ENDPOINT in .env');
